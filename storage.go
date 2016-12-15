@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"mime"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"path"
 	"path/filepath"
@@ -106,6 +107,11 @@ func (c *client) doRequest(req *http.Request, result interface{}) (err error) {
 	}
 
 	if res.StatusCode != 200 {
+		dumpReq, _ := httputil.DumpRequest(req, true)
+		dumpRes, _ := httputil.DumpResponse(res, true)
+		fmt.Printf("%s", dumpReq)
+		fmt.Printf("%s", dumpRes)
+
 		var errResp = ErrorResponse{}
 		err = xml.NewDecoder(res.Body).Decode(&errResp)
 		if err != nil {
